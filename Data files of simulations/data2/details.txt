@@ -1,0 +1,7 @@
+Number of grains = 10
+Grid size : 100
+Number of time steps: 250001
+Delta t: 0.001000
+Ouputs data after 500 time steps
+Total time taken(in sec): 2285.000000
+Total time taken(in min):38.083333
