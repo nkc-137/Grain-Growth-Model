@@ -1,8 +1,11 @@
+// A structure for the domain
 struct Node{
   int q;
   float Val;
   struct Node* next;
 };
+
+// A structure to track the changes in phi values in domain
 struct Track{
   int i;
   int j;
@@ -10,16 +13,21 @@ struct Track{
   float val;
   struct Track *link;
 };
+
+// A structure used in Tesselate function to represent grain centers also called pivots
 struct Pivot{
   int x;
   int y;
   int q;
   struct Pivot* next;
 };
+
+// Function to calculate the distance between two points in domain
 float dist(int i1,int j1,int i2,int j2){
   return ((i1-i2)*(i1-i2)+(j1-j2)*(j1-j2));
 }
 
+// To output the phi values of required phase
 float crawl(struct Node* head,int check){
   struct Node* tempo;
   tempo = head;
@@ -37,6 +45,8 @@ float crawl(struct Node* head,int check){
     }
   }
 }
+
+// Function to make sharp grain boundaries
 int colorize(struct Node* head){
   struct Node* temp;
   float max_value;
@@ -56,6 +66,8 @@ int colorize(struct Node* head){
   }
   return max_q;
 }
+
+// Function to attach a node to struct Node
 struct Node* attach(struct Node* head,int grain,float value){
   struct Node* temp = (struct Node*)malloc(sizeof(struct Node));
   temp->q = grain;
@@ -64,6 +76,8 @@ struct Node* attach(struct Node* head,int grain,float value){
   head = temp;
   return head;
 }
+
+// Function to attach a node to struct Pivot
 struct Pivot* stick(struct Pivot* head,int index1,int index2,int grain){
   struct Pivot* temp = (struct Pivot*)malloc(sizeof(struct Pivot));
   temp->x = index1;
@@ -73,6 +87,8 @@ struct Pivot* stick(struct Pivot* head,int index1,int index2,int grain){
   head = temp;
   return head;
 }
+
+// Function to attach a node to stuct Track
 struct Track* append(struct Track* head,int index1,int index2,int Grain,float value){
   struct Track* temp3 = (struct Track*)malloc(sizeof(struct Track));
   temp3->i = index1;
@@ -84,6 +100,7 @@ struct Track* append(struct Track* head,int index1,int index2,int Grain,float va
   return head;
 }
 
+// Function to delete a node from struct Node
 struct Node* delete(struct Node* head,int n){
   struct Node* temp = head;
   if(n==1){
@@ -99,6 +116,8 @@ struct Node* delete(struct Node* head,int n){
   free(temp2);
   return head;
 }
+
+// Function to delete a node from struct Track
 struct Track* del(struct Track* head,int num){
   struct Track* temp1 = head;
   if(num ==1){
@@ -114,6 +133,8 @@ struct Track* del(struct Track* head,int num){
   free(temp2);
   return head;
 }
+
+// Function to delete a node from struct Pivot
 struct Pivot* pop(struct Pivot* head,int num){
   struct Pivot* temp1 = head;
   if(num==1){
@@ -129,6 +150,8 @@ struct Pivot* pop(struct Pivot* head,int num){
   free(temp2);
   return head;
 }
+
+// Function to change phi value of a specified phase
 struct Node* change(struct Node* head,int check,float new){
   struct Node* tem;
   tem = head;
@@ -150,24 +173,31 @@ struct Node* change(struct Node* head,int check,float new){
   }
 }
 
+// Function to clear the memory in the whole linked list struct Node
 struct Node* clear(struct Node* head){
   while(head != NULL){
     head = delete(head,1);
   }
   return head;
 }
+
+// Function to clear the memory in the whole linked list struct Track
 struct Track* flush(struct Track* head){
   while(head != NULL){
     head = del(head,1);
   }
   return head;
 }
+
+// Function to clear the memory in the whole linked list struct Pivot
 struct Pivot* erase(struct Pivot* head){
   while(head != NULL){
     head = pop(head,1);
   }
   return head;
 }
+
+// Function to print struct Node linked list
 void Print(struct Node* head){
   struct Node* here = head;
   while(here != NULL){
@@ -177,6 +207,7 @@ void Print(struct Node* head){
   printf("\n");
 }
 
+// Function to print struct Track linked list
 void show(struct Track* head){
   struct Track* there = head;
   while(there != NULL){
@@ -185,6 +216,8 @@ void show(struct Track* head){
   }
   printf("\n");
 }
+
+// Function to print struct Pivot linked list
 void output(struct Pivot* head){
   struct Pivot* a = head;
   while(a != NULL){

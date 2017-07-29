@@ -1,3 +1,9 @@
+/*C implementation of Kim Kim Suzuki Grain Growth Model on one processor
+ *Outputs data into folders at desired time intervals
+ *Uses a function to tessellate and simulates grain growth on the resulting domain
+ */
+
+//Import all the libraries required
 #include<stdio.h>
 #include<stdlib.h>
 #include<math.h>
@@ -5,34 +11,41 @@
 #include"set.h"                           //Contains functions to handle linked lists
 #include"voronoi.h"                       //Contains the Tessellation function
 
+
 void main(){
 
                                             //Declaration of variables//
   int i,j,k,l,num_x,t,temp_q,a,b;
   int index1,index2,index3;
-  int num_grains;
-  char name[200];
-  struct Node **phi;
+  int num_grains; //Number of grains present in the domain
+  char name[200]; //Used to contain the path of output data files
+  struct Node **phi; //phi contains the phase fields at each point in the domain
   struct Track* tracker = NULL;
   float mphi,del_x,del_t,alpha,w,eps,lambda,temp_val;
   float phi1,phi2,phi3,phi4,phi5,laplacian,some,p1,p2,p3;
   float updated,total;
   double time_total,time_elapsed;
-  int data_out;
-  clock_t begin = clock();
-
+  int data_out; //Variable to indicate after how many time steps the data should be printed
+  int time_steps;
   //Files
-  FILE *fa,*fb,*fc,*data,*ft;
   FILE * file_temp;
   FILE *info;
-  num_grains = 10;
 
+  //values to be changed
+  num_grains = 300;
+  data_out = 500;
+  num_x = 1000;
+  time_steps = 1;
+
+  // Stores the values of phi of all the phases at a given point.
+  // To be used in normalization part of the code
   float p[num_grains];
 
-  data_out = 500;
+  clock_t begin = clock(); //Begin the clock
+
 
                                             //Initializing parameter values//
-  num_x = 200;
+
   mphi = 1.0;
   del_x = 1.0;
   del_t = 0.001; //previous=0.001
@@ -43,25 +56,32 @@ void main(){
 
   //CARRY OUT VORONOI TESSELLATION
   phi = Tesselate(num_grains,num_x);
+  printf("Domain is successfully TESSELLATED\n");
+
 
                                               /*==============================================*/
                                               /*====================SOLVER====================*/
                                               /*==============================================*/
 
-  t =0; //Number of time steps
-  while(t<1){ //250000
+  t =0; //Count the number of time steps
+  while(t<time_steps){
     /*time_elapsed = clock()/CLOCKS_PER_SEC;
     if((int)time_elapsed%900 == 0){
       printf("Time elapsed: %lf \n",time_elapsed);
     }*/
+                                            /*PART 1: CALCULATING PHI VALUE OF EACH PHASES AND UPDATING THE DOMAIN*/
     for(i=1;i<=num_x;i++){
       for(j=1;j<=num_x;j++){
         for(k=1;k<=num_grains;k++){
+          //Phi values around the point to be calculated
           phi1 = crawl(phi[i*(num_x+2)+j],k);
           phi2 = crawl(phi[(i-1)*(num_x+2)+j],k);
           phi3 = crawl(phi[i*(num_x+2)+j-1],k);
           phi4 = crawl(phi[(i+1)*(num_x+2)+j],k);
           phi5 = crawl(phi[i*(num_x+2)+j+1],k);
+
+          //Calculation of laplacian at that point so that only those points
+          //with non-zero laplacian will be calculated
           laplacian = (phi2 -2*phi1 +phi4)/(del_x*del_x) + (phi5 -2*phi1 +phi3)/(del_x*del_x);
 
                                 //Record the changes to be made//
@@ -70,7 +90,7 @@ void main(){
               temp_q = k;
               temp_val = phi1 + lambda*(phi2+phi3-4*phi1+phi4+phi5) - mphi*del_t*del_x*del_x*(1 - 2*phi1);
               if(temp_val > 0){
-                tracker = append(tracker,i,j,temp_q,temp_val);
+                tracker = append(tracker,i,j,temp_q,temp_val); // Tracker variable records the chanes one by one
               }
             }
           }
@@ -79,7 +99,7 @@ void main(){
 
                                             //Implement the tracked changes//
 
-    struct Track* move = tracker;  //Variable to crawl through tracker linked list
+    struct Track* move = tracker; // Move is a variable to crawl through tracker linked list
     while(move != NULL){
       index1 = move->i;
       index2 = move->j;
@@ -97,18 +117,20 @@ void main(){
     //Clear all memory in tracker
     tracker = flush(tracker);
 
-                                           //Fixing the proprtions of phases in each grid//
+
+                                           /*PART 2: FIXING THE PROPORTIONS OF PHASES IN EACH GRID*/
+
     for(i=1;i<=num_x;i++){
       for(j=1;j<=num_x;j++){
         for(a=0;a<num_grains;a++){
-          p[a] = crawl(phi[i*(num_x+2)+j],a+1);
+          p[a] = crawl(phi[i*(num_x+2)+j],a+1); //Store all the phi values in p
         }
         total = 0;
         for(a=0;a<num_grains;a++){
-          total += p[a];
+          total += p[a];  //Calculate the total for use in normalization in the next step
         }
         for(a=0;a<num_grains;a++){
-        change(phi[i*(num_x+2)+j],a+1,p[a]/total);
+        change(phi[i*(num_x+2)+j],a+1,p[a]/total);  // Normalize each phase
       }
       }
     }
@@ -118,9 +140,9 @@ void main(){
     printf("Done with %d time steps\n",t);
   }
 
-                                            //Plotting at each time step//
+                                            /*PART 3: OUTPUT DATA AT REQUIRED TIME STEPS*/
   if(t % data_out == 0){
-  sprintf(name,"/home/kapil/IISC/data4/data%d.dat",t);
+  sprintf(name,"/home/kapil/IISC/data5/data%d.dat",t); //Assign the path of the data files to the string name
   file_temp = fopen(name,"w");
   for(i=1;i<=num_x;i++){
     for(j=1;j<=num_x;j++){
@@ -133,12 +155,11 @@ void main(){
 
     t++;
 } //END WHILE LOOP
+
 tracker = flush(tracker); //Clear memory in tracker for safety
 
 
-
-
-                                                         //FREE ALLOCATED SPACE//
+                                                        /*PART 4: FREE ALLOCATED SPACE*/
 for(i=0;i<num_x+2;i++){
   for(j=0;j<num_x+2;j++){
     phi[i*(num_x)+j] = clear(phi[i*(num_x+2)+j]);
@@ -148,13 +169,13 @@ free(phi);
 
                                             //Calculate and output time taken to run the program//
 
-  clock_t end = clock();
-  time_total = (end-begin)/CLOCKS_PER_SEC;
+  clock_t end = clock(); // End of the clock
+  time_total = (end-begin)/CLOCKS_PER_SEC; // Calculate total time in seconds
   printf("total time taken = %lf\n",time_total);
 
 
                                             //Making a file containing details of the program//
-  info = fopen("/home/kapil/IISC/data4/details.txt","w");
+  info = fopen("/home/kapil/IISC/data5/details.txt","w");
   fprintf(info,"Number of grains = %d\n",num_grains);
   fprintf(info,"Grid size : %d\n",num_x);
   fprintf(info,"Number of time steps: %d\n",t+1);
