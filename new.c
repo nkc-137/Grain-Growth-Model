@@ -30,19 +30,23 @@ void main(){
   //Files
   FILE * file_temp;
   FILE *info;
+  FILE *input;
+
+  input = fopen("Input_Data.txt","r");
+  fscanf(input,"Number of grains = %d\nNumber of grids = %d\nPrint after %d time steps\nTotal number of time steps = %d",&num_grains,&num_x,&data_out,&time_steps);
+  fclose(input);
 
   //values to be changed
-  num_grains = 300;
-  data_out = 500;
-  num_x = 1000;
-  time_steps = 1;
+  //num_grains = 3;
+  //data_out = 500;
+  //num_x = 100;
+  //time_steps = 2;
 
   // Stores the values of phi of all the phases at a given point.
   // To be used in normalization part of the code
   float p[num_grains];
 
   clock_t begin = clock(); //Begin the clock
-
 
                                             //Initializing parameter values//
 
@@ -142,7 +146,7 @@ void main(){
 
                                             /*PART 3: OUTPUT DATA AT REQUIRED TIME STEPS*/
   if(t % data_out == 0){
-  sprintf(name,"/home/kapil/IISC/data5/data%d.dat",t); //Assign the path of the data files to the string name
+  sprintf(name,"/home/kapil/IISC/your_data/data%d.dat",t); //Assign the path of the data files to the string name
   file_temp = fopen(name,"w");
   for(i=1;i<=num_x;i++){
     for(j=1;j<=num_x;j++){
@@ -151,7 +155,7 @@ void main(){
     fprintf(file_temp,"\n");
   }
   fclose(file_temp);
-  }
+}
 
     t++;
 } //END WHILE LOOP
@@ -175,7 +179,7 @@ free(phi);
 
 
                                             //Making a file containing details of the program//
-  info = fopen("/home/kapil/IISC/data5/details.txt","w");
+  info = fopen("/home/kapil/IISC/your_data/details.txt","w");
   fprintf(info,"Number of grains = %d\n",num_grains);
   fprintf(info,"Grid size : %d\n",num_x);
   fprintf(info,"Number of time steps: %d\n",t+1);
