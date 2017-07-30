@@ -9,7 +9,7 @@ Make a clone of the folder in your local machine.
 ### Pre-requisites
 GCC compiler must be installed on your machine.
 ### Installation
-No installation is required! Open a terminal/cmd in the folder and follow the instructions for carrying out simulations directly.
+No installation is required! Open terminal/cmd in the folder and follow the instructions for carrying out simulations directly.
 
 ## Carrying out of simulations
 Before starting off with simulations first open the Input_Data.txt file which contains initial parameters to be given as input
@@ -28,5 +28,4 @@ Or you could even do this:<br />
 The simulations take time depending upon the parameters given in Input_Data.txt. After every 1000 time steps a statement appears on the command line saying that so and so number of time steps are finished, just to make sure that the code is running.
 
 ## What to do next?
-All the data obtained during simulations is contained in a folder called 'your_data' in the form of .dat files. At the end of simulation a file called details.txt is created in the same folder which contains the time taken by the program to run in seconds, minutes and hours.
-
+Check out the folder called 'your_data' because all the data obtained during simulations is contained in that folder in the form of .dat files. At the end of simulation a file called details.txt is also created in the same folder which contains the time taken by the program to run in seconds, minutes and hours. 
