@@ -6,8 +6,10 @@
 //Import all the libraries required
 #include<stdio.h>
 #include<stdlib.h>
+#include<string.h>
 #include<math.h>
 #include<time.h>
+#include<unistd.h>
 #include"set.h"                           //Contains functions to handle linked lists
 #include"voronoi.h"                       //Contains the Tessellation function
 
@@ -19,6 +21,8 @@ void main(){
   int index1,index2,index3;
   int num_grains; //Number of grains present in the domain
   char name[200]; //Used to contain the path of output data files
+  char cwd[1024];
+  char cwd1[1024];
   struct Node **phi; //phi contains the phase fields at each point in the domain
   struct Track* tracker = NULL;
   float mphi,del_x,del_t,alpha,w,eps,lambda,temp_val;
@@ -32,6 +36,8 @@ void main(){
   FILE *info;
   FILE *input;
 
+  getcwd(cwd,sizeof(cwd));
+  getcwd(cwd1,sizeof(cwd1));
   input = fopen("Input_Data.txt","r");
   fscanf(input,"Number of grains = %d\nNumber of grids = %d\nPrint after %d time steps\nTotal number of time steps = %d",&num_grains,&num_x,&data_out,&time_steps);
   fclose(input);
@@ -146,8 +152,9 @@ void main(){
 
                                             /*PART 3: OUTPUT DATA AT REQUIRED TIME STEPS*/
   if(t % data_out == 0){
-  sprintf(name,"/home/kapil/IISC/your_data/data%d.dat",t); //Assign the path of the data files to the string name
-  file_temp = fopen(name,"w");
+  sprintf(name,"/your_data/data%d.dat",t); //Assign the path of the data files to the string name
+  strcat(cwd,name);
+  file_temp = fopen(cwd,"w");
   for(i=1;i<=num_x;i++){
     for(j=1;j<=num_x;j++){
       fprintf(file_temp,"%d %d %d\n",i,j,colorize(phi[i*(num_x+2)+j]));
@@ -179,7 +186,8 @@ free(phi);
 
 
                                             //Making a file containing details of the program//
-  info = fopen("/home/kapil/IISC/your_data/details.txt","w");
+  strcat(cwd1,"/your_data/details.txt");
+  info = fopen(cwd1,"w");
   fprintf(info,"Number of grains = %d\n",num_grains);
   fprintf(info,"Grid size : %d\n",num_x);
   fprintf(info,"Number of time steps: %d\n",t+1);

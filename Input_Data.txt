@@ -1,4 +1,4 @@
-Number of grains = 3
+Number of grains = 4
 Number of grids = 50
 Print after 1 time steps
 Total number of time steps = 1
