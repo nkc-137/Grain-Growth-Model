@@ -195,6 +195,7 @@ free(phi);
   fprintf(info,"Ouputs data after %d time steps\n",data_out);
   fprintf(info,"Total time taken(in sec): %lf\n",time_total);
   fprintf(info,"Total time taken(in min):%lf\n",time_total/60);
+  fprintf(info,"Total time taken(in hours):%lf\n",time_total/3600);
   fclose(info);
 
 } //END OF PROGRAM
