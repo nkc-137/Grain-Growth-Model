@@ -23,6 +23,9 @@ void main(){
   char name[200]; //Used to contain the path of output data files
   char cwd[1024];
   char cwd1[1024];
+  char cwd2[1024];
+  char cwd3[1024];
+  char gnu1[100];
   struct Node **phi; //phi contains the phase fields at each point in the domain
   struct Track* tracker = NULL;
   float mphi,del_x,del_t,alpha,w,eps,lambda,temp_val;
@@ -35,9 +38,12 @@ void main(){
   FILE * file_temp;
   FILE *info;
   FILE *input;
+  FILE *plots;
 
-  getcwd(cwd,sizeof(cwd));
   getcwd(cwd1,sizeof(cwd1));
+  getcwd(cwd2,sizeof(cwd2));
+  getcwd(cwd3,sizeof(cwd3));
+
   input = fopen("Input_Data.txt","r");
   fscanf(input,"Number of grains = %d\nNumber of grids = %d\nPrint after %d time steps\nTotal number of time steps = %d",&num_grains,&num_x,&data_out,&time_steps);
   fclose(input);
@@ -152,6 +158,7 @@ void main(){
 
                                             /*PART 3: OUTPUT DATA AT REQUIRED TIME STEPS*/
   if(t % data_out == 0){
+  getcwd(cwd,sizeof(cwd));
   sprintf(name,"/your_data/data%d.dat",t); //Assign the path of the data files to the string name
   strcat(cwd,name);
   file_temp = fopen(cwd,"w");
@@ -197,5 +204,19 @@ free(phi);
   fprintf(info,"Total time taken(in min):%lf\n",time_total/60);
   fprintf(info,"Total time taken(in hours):%lf\n",time_total/3600);
   fclose(info);
+
+                                            //Making a file for plots
+  strcat(cwd2,"/your_data/plot.plt");
+  plots = fopen(cwd2,"w");
+  fprintf(plots,"set term jpeg\n");
+  fprintf(plots,"set pm3d map\n");
+  fprintf(plots,"do for [i=0:%d]{\n",time_steps-1);
+  fprintf(plots,"if(i %% %d == 0){\n",data_out);
+  sprintf(gnu1,"out_file = sprintf('%s/your_data/plots/img%%04d.jpeg',i/1000)",cwd3);
+  fprintf(plots,"%s\n",gnu1);
+  fprintf(plots,"set output out_file\n");
+  fprintf(plots,"splot 'data'.i.'.dat'\n");
+  fprintf(plots,"}\n}\n");
+  fclose(plots);
 
 } //END OF PROGRAM
