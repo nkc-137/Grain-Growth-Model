@@ -10,8 +10,10 @@ Make a clone of the folder in your local machine.
 GCC compiler must be installed on your machine.
 Optional: ffmpeg library must be installed inorder to convert images to videos. Installation instructions for the same will also be given.
 ### Installation
-No installation is required! Open terminal/cmd in the folder and follow the instructions for carrying out simulations directly.
-
+No installation is required! Open terminal/cmd in the folder and follow the instructions for carrying out simulations directly.<br />
+But as soon as you download the folder onto your local machine and are ready to carry out simulations you must run the following command:<br />
+`make clean`<br />
+**The above step is very important and on failing to do this you will get segmentation fault when you try to run the code.**
 ## Carrying out simulations
 Before starting off with simulations first open the Input_Data.txt file which contains initial parameters to be given as input
 1. Number of grains
