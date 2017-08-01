@@ -6,7 +6,7 @@ clean:
 	rm -f *.o executable
 	rm -rf your_data
 	mkdir your_data
-	cd your_data && mkdir plots
+	cd your_data && mkdir plots && touch ignore.txt
 run:
 	./executable
 plot:
