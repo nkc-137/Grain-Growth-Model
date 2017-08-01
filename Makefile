@@ -7,8 +7,6 @@ clean:
 	rm -rf your_data
 	mkdir your_data
 	cd your_data && mkdir plots
-	cp ignore.txt your_data
-	cd your_data && cp ignore.txt plots
 run:
 	./executable
 plot:
